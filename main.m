@@ -12,11 +12,31 @@ den = [const.J*const.Rm (const.Kg*const.Km)^2+const.Kg*const.Km*Kd(i) const.Kg*c
 sysTF = tf(num,den);
 
 %% Step Response
-figure
+subplot(2,4,i)
 [x,t] = step(sysTF);
 plot(t,x)
+title(sprintf("Case %.0f: Kp = %.1f Kd = %.1f", i, Kp(i), Kd(i)))
+xlabel('time (s)')
+ylabel('Position Response')
 end
 
+%% <20% overshoot <5% ring in 1s
+numcase = Kp(5)*const.Kg*const.Km;
+dencase = [const.J*const.Rm (const.Kg*const.Km)^2+const.Kg*const.Km*Kd(5) const.Kg*const.Km*Kp(5)];
+sysTFcase = tf(numcase,dencase);
+[x,t] = step(sysTFcase);
+figure()
+plot(t,x)
+hold on
+xlim([0 1])
+ylim([0 1.25])
+yline(1.2, 'r--')
+yline(1.05, 'b--')
+yline(.95, 'b--')
+legend("Arm Position", "20% Overshoot", "5% ringing", Location="best")
+title("Kp = 10, Kd = 1")
+xlabel("Time(s)")
+ylabel("Position")
 
 function [const] = getconst()
     const.Kg = 33.3;
